@@ -126,4 +126,3 @@ if uploaded_file:
         st.error("無法辨識有效的統一編號。請確保照片清晰且包含 8 碼統編。")
         with st.expander("查看 OCR 辨識結果文本"):
             st.text(raw_text)
-eof
