@@ -24,8 +24,12 @@ with col2:
 if ubn and len(ubn) == 8:
     with st.spinner("查詢中..."):
         api_url = f"https://eip.fia.gov.tw/OAI/api/businessRegistration/{ubn}"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+            "Accept": "application/json"
+        }
         try:
-            resp = requests.get(api_url, timeout=10)
+            resp = requests.get(api_url, headers=headers, timeout=15)
             if resp.status_code == 200:
                 biz_data = resp.json()
                 biz_name = biz_data.get("businessNm", "未知店家")
@@ -68,10 +72,12 @@ if ubn and len(ubn) == 8:
                 
                 for warn in warnings:
                     st.warning(warn)
+            elif resp.status_code == 404:
+                st.error("查無此統編資料。")
             else:
-                st.error("查無此統編。")
-        except Exception as e:
-            st.error("連線失敗。")
+                st.error(f"伺服器回應錯誤 (代碼: {resp.status_code})")
+        except requests.exceptions.RequestException:
+            st.error("API 連線超時或失敗，請稍後再試。")
 elif ubn:
     st.warning("請輸入 8 碼統編。")
 
